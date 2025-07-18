@@ -1,0 +1,238 @@
+{% extends "base.html" %}
+
+{% block title %}上司用ダッシュボード - 1on1アシスタント{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-10 mx-auto">
+        <!-- ヘッダー -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h2 class="mb-1">
+                    <i class="fas fa-user-tie text-primary"></i> 上司用ダッシュボード
+                </h2>
+                <p class="text-muted mb-0">部下との効果的な1on1をサポート</p>
+            </div>
+            <a href="{{ url_for('index') }}" class="btn btn-outline-secondary">
+                <i class="fas fa-exchange-alt"></i> 役割切り替え
+            </a>
+        </div>
+
+        <!-- 1on1開始セクション -->
+        <div class="card mb-4 border-0 shadow-sm">
+            <div class="card-body p-4">
+                <h5 class="card-title mb-3">
+                    <i class="fas fa-play-circle text-success"></i> 1on1を開始
+                </h5>
+                
+                <form id="startMeetingForm" class="row g-3">
+                    <div class="col-md-4">
+                        <label class="form-label">あなた（上司）</label>
+                        <select class="form-select" id="manager_id" required>
+                            <option value="">選択してください</option>
+                            {% for manager in managers %}
+                                <option value="{{ manager.id }}">{{ manager.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">部下</label>
+                        <select class="form-select" id="subordinate_id" required>
+                            <option value="">選択してください</option>
+                            {% for subordinate in subordinates %}
+                                <option value="{{ subordinate.id }}">{{ subordinate.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">&nbsp;</label>
+                        <button type="submit" class="btn btn-success w-100">
+                            <i class="fas fa-arrow-right"></i> 事前準備に進む
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- 最近の1on1履歴 -->
+        <div class="card mb-4 border-0 shadow-sm">
+            <div class="card-body p-4">
+                <h5 class="card-title mb-3">
+                    <i class="fas fa-history text-info"></i> 最近の1on1履歴
+                </h5>
+                
+                <div class="row">
+                    <div class="col-md-8">
+                        <p class="text-muted mb-3">過去の1on1記録を確認し、継続的な関係構築にお役立てください</p>
+                        
+                        <!-- 履歴がない場合の表示 -->
+                        <div class="text-center py-4">
+                            <i class="fas fa-calendar-plus fa-3x text-muted mb-3"></i>
+                            <p class="text-muted">まだ1on1の記録がありません</p>
+                            <p class="small text-muted">最初の1on1を開始して、効果的な対話を始めましょう</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="bg-light rounded p-3">
+                            <h6 class="text-primary mb-2">
+                                <i class="fas fa-lightbulb"></i> アドバイス
+                            </h6>
+                            <ul class="small text-muted mb-0">
+                                <li>定期的な実施（月2-4回）</li>
+                                <li>部下の話を聞く時間を重視</li>
+                                <li>前回の内容を確認してから開始</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- クイックアクセス -->
+        <div class="row g-3">
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body text-center p-4">
+                        <i class="fas fa-clipboard-list fa-2x text-primary mb-3"></i>
+                        <h6 class="card-title">事前準備ガイド</h6>
+                        <p class="card-text small text-muted">効果的な1on1のための準備ポイント</p>
+                        <button class="btn btn-outline-primary btn-sm">詳細を見る</button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body text-center p-4">
+                        <i class="fas fa-chart-line fa-2x text-success mb-3"></i>
+                        <h6 class="card-title">成長トレンド</h6>
+                        <p class="card-text small text-muted">部下の成長パターンを可視化</p>
+                        <button class="btn btn-outline-success btn-sm">分析を見る</button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body text-center p-4">
+                        <i class="fas fa-users fa-2x text-info mb-3"></i>
+                        <h6 class="card-title">ユーザー管理</h6>
+                        <p class="card-text small text-muted">新しいメンバーの追加・管理</p>
+                        <button class="btn btn-outline-info btn-sm" onclick="showUserManagement()">管理する</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ユーザー管理モーダル -->
+<div class="modal fade" id="userManagementModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">ユーザー管理</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="addUserForm" class="mb-4">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <input type="text" class="form-control" id="user_name" placeholder="ユーザー名" required>
+                        </div>
+                        <div class="col-md-4">
+                            <select class="form-select" id="user_role" required>
+                                <option value="">役割を選択</option>
+                                <option value="manager">上司</option>
+                                <option value="subordinate">部下</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <button type="submit" class="btn btn-primary w-100">追加</button>
+                        </div>
+                    </div>
+                </form>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6 class="text-success">上司</h6>
+                        <div class="list-group">
+                            {% for manager in managers %}
+                                <div class="list-group-item">
+                                    <i class="fas fa-user-tie text-primary"></i> {{ manager.name }}
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <h6 class="text-info">部下</h6>
+                        <div class="list-group">
+                            {% for subordinate in subordinates %}
+                                <div class="list-group-item">
+                                    <i class="fas fa-user text-success"></i> {{ subordinate.name }}
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // 1on1開始フォーム処理
+    document.getElementById('startMeetingForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const managerId = document.getElementById('manager_id').value;
+        const subordinateId = document.getElementById('subordinate_id').value;
+        
+        if (!managerId || !subordinateId) {
+            alert('上司と部下を選択してください');
+            return;
+        }
+        
+        // 上司用の事前準備ページに遷移
+        window.location.href = `/manager/prepare?manager_id=${managerId}&subordinate_id=${subordinateId}`;
+    });
+    
+    // ユーザー管理モーダル表示
+    function showUserManagement() {
+        new bootstrap.Modal(document.getElementById('userManagementModal')).show();
+    }
+    
+    // ユーザー追加処理
+    document.getElementById('addUserForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const name = document.getElementById('user_name').value;
+        const role = document.getElementById('user_role').value;
+        
+        if (!name || !role) {
+            alert('名前と役割を入力してください');
+            return;
+        }
+        
+        fetch('/api/add_user', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                name: name,
+                role: role
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('ユーザーを追加しました');
+                location.reload();
+            } else {
+                alert('ユーザー追加に失敗しました: ' + data.error);
+            }
+        });
+    });
+</script>
+{% endblock %}

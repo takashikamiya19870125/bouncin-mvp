@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="ja" data-bs-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}bouncin - 1on1アシスタント{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --header-bg: #1a1a1a;
+            --header-text: #ffffff;
+            --logo-accent: #007bff;
+            --body-logo-color: #1a1a1a;
+        }
+        
+        .bouncin-header {
+            background-color: var(--header-bg);
+            color: var(--header-text);
+            padding: 1rem 0;
+            border-bottom: 1px solid #333;
+        }
+        
+        .bouncin-logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--header-text);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .bouncin-logo:hover {
+            color: var(--logo-accent);
+        }
+        
+        .bouncin-logo .logo-image {
+            height: 32px;
+            width: auto;
+            object-fit: contain;
+            background: transparent;
+            filter: brightness(0) invert(1);
+        }
+        
+        .bouncin-logo .logo-icon {
+            width: 32px;
+            height: 32px;
+            background-color: transparent;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: var(--header-text);
+        }
+        
+        .theme-toggle {
+            background: none;
+            border: 1px solid #444;
+            color: var(--header-text);
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .theme-toggle:hover {
+            background-color: #333;
+            color: var(--header-text);
+        }
+        
+        /* ダークモード時のスタイル */
+        [data-bs-theme="dark"] {
+            --bs-body-bg: #1a1a1a;
+            --bs-body-color: #ffffff;
+            --bs-card-bg: #2d2d2d;
+            --bs-border-color: #444;
+            --header-bg: #ffffff;
+            --header-text: #1a1a1a;
+            --body-logo-color: #ffffff;
+        }
+        
+        [data-bs-theme="dark"] .card {
+            background-color: var(--bs-card-bg);
+            border-color: var(--bs-border-color);
+        }
+        
+        [data-bs-theme="dark"] .bg-light {
+            background-color: #333 !important;
+            color: #ffffff;
+        }
+        
+        [data-bs-theme="dark"] .text-muted {
+            color: #aaa !important;
+        }
+        
+        [data-bs-theme="dark"] .badge.bg-light {
+            background-color: #444 !important;
+            color: #ffffff !important;
+        }
+        
+        /* 既存のスタイル */
+        .category-checkbox {
+            margin-bottom: 10px;
+        }
+        .key-point-checkbox {
+            margin-bottom: 8px;
+        }
+        .previous-meeting {
+            background-color: #f8f9fa;
+            border-left: 4px solid #007bff;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+        
+        [data-bs-theme="dark"] .previous-meeting {
+            background-color: #333;
+            color: #ffffff;
+        }
+        
+        .agenda-item {
+            background-color: #e8f4f8;
+            border: 1px solid #bee5eb;
+            border-radius: 5px;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+        .agenda-item:hover {
+            background-color: #d1ecf1;
+            cursor: pointer;
+        }
+        
+        [data-bs-theme="dark"] .agenda-item {
+            background-color: #404040;
+            border-color: #555;
+            color: #ffffff;
+        }
+        
+        [data-bs-theme="dark"] .agenda-item:hover {
+            background-color: #4a4a4a;
+        }
+        
+        /* ボディのロゴ色制御 */
+        .body-logo {
+            color: var(--body-logo-color) !important;
+        }
+    </style>
+</head>
+<body>
+    <header class="bouncin-header">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center">
+                <a href="{{ url_for('index') }}" class="bouncin-logo">
+                    <div class="logo-icon">
+                        <i class="fas fa-comments"></i>
+                    </div>
+                    <span>bouncin</span>
+                </a>
+                
+                <div class="d-flex align-items-center gap-3">
+                    {% if session.user_id %}
+                        <span class="text-muted small">
+                            <i class="fas fa-user"></i> {{ session.get('user_name', 'ユーザー') }}
+                        </span>
+                        <a href="{{ url_for('logout') }}" class="btn btn-outline-light btn-sm">
+                            <i class="fas fa-sign-out-alt"></i> ログアウト
+                        </a>
+                    {% endif %}
+                    
+                    <button class="theme-toggle" onclick="toggleTheme()">
+                        <i class="fas fa-moon" id="theme-icon"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container mt-4">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ 'danger' if category == 'error' else 'success' }} alert-dismissible fade show">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // ダークモード切り替え機能
+        function toggleTheme() {
+            const html = document.documentElement;
+            const currentTheme = html.getAttribute('data-bs-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            
+            html.setAttribute('data-bs-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            
+            // アイコン更新
+            const icon = document.getElementById('theme-icon');
+            icon.className = newTheme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+        }
+        
+        // ページ読み込み時にテーマを復元
+        document.addEventListener('DOMContentLoaded', function() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-bs-theme', savedTheme);
+            
+            const icon = document.getElementById('theme-icon');
+            icon.className = savedTheme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+        });
+    </script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>

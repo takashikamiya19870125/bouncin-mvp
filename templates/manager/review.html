@@ -1,0 +1,275 @@
+{% extends "base.html" %}
+
+{% block title %}1on1振り返り - 上司用{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-8 mx-auto">
+        <!-- ヘッダー -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h2 class="mb-1">
+                    <i class="fas fa-clipboard-check text-success"></i> 1on1振り返り
+                </h2>
+                <p class="text-muted mb-0">今日の1on1を記録し、次回に活かしましょう</p>
+            </div>
+            <a href="{{ url_for('dashboard') }}" class="btn btn-outline-secondary">
+                <i class="fas fa-home"></i> ダッシュボード
+            </a>
+        </div>
+
+        <div class="alert alert-success border-0 mb-4">
+            <i class="fas fa-check-circle"></i> 
+            <strong>1on1お疲れ様でした！</strong> 
+            簡単な記録で次回をより良いものにしましょう。
+            <small class="d-block mt-1">所要時間: 約1-2分</small>
+        </div>
+
+        <!-- 上司視点での振り返り -->
+        <div class="card mb-4 border-0 shadow-sm">
+            <div class="card-body p-4">
+                <h5 class="card-title text-primary mb-3">
+                    <i class="fas fa-user-tie"></i> 上司としての振り返り
+                </h5>
+                
+                <form id="managerReviewForm">
+                    <input type="hidden" id="subordinate_id" value="{{ subordinate_id }}">
+                    
+                    <!-- 話題カテゴリ -->
+                    <div class="mb-4">
+                        <h6 class="text-secondary mb-3">
+                            <i class="fas fa-tags"></i> 主な話題（複数選択可）
+                        </h6>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" value="目標・業績の進捗" id="cat1">
+                                    <label class="form-check-label" for="cat1">
+                                        <i class="fas fa-bullseye text-primary"></i> 目標・業績の進捗
+                                    </label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" value="業務上の困りごと" id="cat2">
+                                    <label class="form-check-label" for="cat2">
+                                        <i class="fas fa-exclamation-triangle text-warning"></i> 業務上の困りごと
+                                    </label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" value="チーム・人間関係" id="cat3">
+                                    <label class="form-check-label" for="cat3">
+                                        <i class="fas fa-users text-info"></i> チーム・人間関係
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" value="スキル・成長相談" id="cat4">
+                                    <label class="form-check-label" for="cat4">
+                                        <i class="fas fa-graduation-cap text-success"></i> スキル・成長相談
+                                    </label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" value="キャリア・将来の話" id="cat5">
+                                    <label class="form-check-label" for="cat5">
+                                        <i class="fas fa-rocket text-purple"></i> キャリア・将来の話
+                                    </label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" value="ワークライフバランス" id="cat6">
+                                    <label class="form-check-label" for="cat6">
+                                        <i class="fas fa-balance-scale text-secondary"></i> ワークライフバランス
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 今回の成果 -->
+                    <div class="mb-4">
+                        <h6 class="text-secondary mb-3">
+                            <i class="fas fa-star"></i> 今回の成果・気づき（1-2個選択）
+                        </h6>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" value="部下の新しい一面を発見" id="point1">
+                                    <label class="form-check-label" for="point1">
+                                        <i class="fas fa-search text-info"></i> 部下の新しい一面を発見
+                                    </label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" value="課題解決の方向性が見えた" id="point2">
+                                    <label class="form-check-label" for="point2">
+                                        <i class="fas fa-lightbulb text-warning"></i> 課題解決の方向性が見えた
+                                    </label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" value="具体的なサポート方法が決まった" id="point3">
+                                    <label class="form-check-label" for="point3">
+                                        <i class="fas fa-hands-helping text-primary"></i> 具体的なサポート方法が決まった
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" value="部下のモチベーション向上を確認" id="point4">
+                                    <label class="form-check-label" for="point4">
+                                        <i class="fas fa-arrow-up text-success"></i> 部下のモチベーション向上を確認
+                                    </label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" value="信頼関係が深まった" id="point5">
+                                    <label class="form-check-label" for="point5">
+                                        <i class="fas fa-heart text-danger"></i> 信頼関係が深まった
+                                    </label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" value="成長の方向性を合意できた" id="point6">
+                                    <label class="form-check-label" for="point6">
+                                        <i class="fas fa-compass text-info"></i> 成長の方向性を合意できた
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 次回に向けたアクション -->
+                    <div class="mb-4">
+                        <h6 class="text-secondary mb-3">
+                            <i class="fas fa-arrow-right"></i> 次回フォローしたい項目
+                        </h6>
+                        <textarea class="form-control" id="follow_up" rows="3" 
+                                  placeholder="例：○○の進捗確認、△△スキルの習得サポート、チーム内課題の解決状況..."></textarea>
+                        <small class="form-text text-muted">
+                            次回の1on1で優先的に確認したい項目を記録してください。
+                        </small>
+                    </div>
+
+                    <!-- 上司としての学び -->
+                    <div class="mb-4">
+                        <h6 class="text-secondary mb-3">
+                            <i class="fas fa-graduation-cap"></i> 上司としての学び・改善点（任意）
+                        </h6>
+                        <textarea class="form-control" id="manager_learning" rows="2" 
+                                  placeholder="例：もっと聞く時間を作る、具体的な質問をする、感情に共感する..."></textarea>
+                        <small class="form-text text-muted">
+                            今回の1on1で気づいた自分の改善点や学びを記録してください。
+                        </small>
+                    </div>
+
+                    <!-- 送信ボタン -->
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-success btn-lg px-5">
+                            <i class="fas fa-save"></i> 記録を保存して完了
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- 次回への案内 -->
+        <div class="card border-0 bg-light">
+            <div class="card-body text-center p-4">
+                <h6 class="text-primary mb-2">
+                    <i class="fas fa-calendar-plus"></i> 次回の1on1に向けて
+                </h6>
+                <p class="small text-muted mb-0">
+                    今回の記録は次回の事前準備で自動的に表示され、<br>
+                    継続的な成長サポートに活用されます。
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 保存完了モーダル -->
+<div class="modal fade" id="saveCompleteModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title">
+                    <i class="fas fa-check-circle"></i> 記録完了
+                </h5>
+            </div>
+            <div class="modal-body text-center">
+                <i class="fas fa-check-circle fa-3x text-success mb-3"></i>
+                <h5>1on1記録が保存されました！</h5>
+                <p class="text-muted">次回の1on1でこの内容が活用されます。</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success" onclick="goToDashboard()">
+                    <i class="fas fa-home"></i> ダッシュボードに戻る
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.getElementById('managerReviewForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        // 選択されたカテゴリを取得
+        const categories = [];
+        document.querySelectorAll('input[type="checkbox"]:checked').forEach(checkbox => {
+            if (checkbox.id.startsWith('cat')) {
+                categories.push(checkbox.value);
+            }
+        });
+        
+        // 選択された成果ポイントを取得
+        const keyPoints = [];
+        document.querySelectorAll('input[type="checkbox"]:checked').forEach(checkbox => {
+            if (checkbox.id.startsWith('point')) {
+                keyPoints.push(checkbox.value);
+            }
+        });
+        
+        // バリデーション
+        if (categories.length === 0) {
+            alert('主な話題を少なくとも1つ選択してください');
+            return;
+        }
+        
+        if (keyPoints.length === 0) {
+            alert('今回の成果・気づきを少なくとも1つ選択してください');
+            return;
+        }
+        
+        // データを送信
+        const data = {
+            subordinate_id: document.getElementById('subordinate_id').value,
+            categories: categories,
+            key_points: keyPoints,
+            follow_up: document.getElementById('follow_up').value,
+            manager_learning: document.getElementById('manager_learning').value
+        };
+        
+        fetch('/api/save_meeting', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                new bootstrap.Modal(document.getElementById('saveCompleteModal')).show();
+            } else {
+                alert('保存に失敗しました: ' + data.error);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('エラーが発生しました');
+        });
+    });
+    
+    function goToDashboard() {
+        window.location.href = '/dashboard';
+    }
+</script>
+{% endblock %}

@@ -1,0 +1,310 @@
+{% extends "base.html" %}
+
+{% block title %}{{ current_user.name }}さんのダッシュボード - bouncin{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-10 mx-auto">
+        <!-- ヘッダー -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h2 class="mb-1">
+                    <i class="fas fa-user-circle text-primary"></i> {{ current_user.name }}さんのダッシュボード
+                </h2>
+                <p class="text-muted mb-0">{{ current_user.department }} | 会話が弾む1on1をサポート</p>
+            </div>
+            <div>
+                <a href="{{ url_for('logout') }}" class="btn btn-outline-secondary">
+                    <i class="fas fa-sign-out-alt"></i> ログアウト
+                </a>
+            </div>
+        </div>
+
+        <!-- 上司として -->
+        <div class="card mb-4 border-0 shadow-sm">
+            <div class="card-body p-4">
+                <h5 class="card-title mb-3">
+                    <i class="fas fa-user-tie text-primary"></i> 上司として
+                    <span class="badge bg-primary ms-2">{{ subordinates|length }}人</span>
+                </h5>
+                
+                {% if subordinates %}
+                    <div class="row g-3">
+                        {% for subordinate in subordinates %}
+                        <div class="col-md-6 col-lg-4">
+                            <div class="card border-0 bg-light">
+                                <div class="card-body p-3">
+                                    <div class="d-flex align-items-center mb-2">
+                                        <i class="fas fa-user text-success me-2"></i>
+                                        <h6 class="card-title mb-0">{{ subordinate.name }}</h6>
+                                    </div>
+                                    <p class="small text-muted mb-2">{{ subordinate.department }}</p>
+                                    
+                                    {% if subordinate.next_meeting %}
+                                        <p class="small text-info mb-2">
+                                            <i class="fas fa-calendar"></i> 次回: {{ subordinate.next_meeting }}
+                                        </p>
+                                    {% endif %}
+                                    
+                                    {% if subordinate.preparation_status %}
+                                        <p class="small mb-2">
+                                            {% if subordinate.preparation_status == '準備完了' %}
+                                                <span class="badge bg-success">
+                                                    <i class="fas fa-check"></i> 準備完了
+                                                </span>
+                                            {% else %}
+                                                <span class="badge bg-warning text-dark">
+                                                    <i class="fas fa-clock"></i> 準備待ち
+                                                </span>
+                                            {% endif %}
+                                        </p>
+                                    {% endif %}
+                                    
+                                    <div class="d-flex gap-2">
+                                        <a href="{{ url_for('manager_prepare') }}?subordinate_id={{ subordinate.id }}" 
+                                           class="btn btn-primary btn-sm flex-fill">
+                                            <i class="fas fa-clipboard-list"></i> 準備
+                                        </a>
+                                        <a href="{{ url_for('history') }}" 
+                                           class="btn btn-outline-primary btn-sm">
+                                            <i class="fas fa-history"></i> 履歴
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    
+                    <div class="mt-3">
+                        <button class="btn btn-outline-primary btn-sm" onclick="showAddSubordinateModal()">
+                            <i class="fas fa-plus"></i> 部下を追加
+                        </button>
+                    </div>
+                {% else %}
+                    <div class="text-center py-4">
+                        <i class="fas fa-user-plus fa-3x text-muted mb-3"></i>
+                        <p class="text-muted">まだ部下が登録されていません</p>
+                        <button class="btn btn-primary" onclick="showAddSubordinateModal()">
+                            <i class="fas fa-plus"></i> 最初の部下を追加
+                        </button>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- 部下として -->
+        <div class="card mb-4 border-0 shadow-sm">
+            <div class="card-body p-4">
+                <h5 class="card-title mb-3">
+                    <i class="fas fa-user text-success"></i> 部下として
+                    <span class="badge bg-success ms-2">{{ managers|length }}人</span>
+                </h5>
+                
+                {% if managers %}
+                    <div class="row g-3">
+                        {% for manager in managers %}
+                        <div class="col-md-6 col-lg-4">
+                            <div class="card border-0 bg-light">
+                                <div class="card-body p-3">
+                                    <div class="d-flex align-items-center mb-2">
+                                        <i class="fas fa-user-tie text-primary me-2"></i>
+                                        <h6 class="card-title mb-0">{{ manager.name }}</h6>
+                                    </div>
+                                    <p class="small text-muted mb-2">{{ manager.department }}</p>
+                                    
+                                    {% if manager.next_meeting %}
+                                        <p class="small text-info mb-2">
+                                            <i class="fas fa-calendar"></i> 次回: {{ manager.next_meeting }}
+                                        </p>
+                                    {% endif %}
+                                    
+                                    <div class="d-flex gap-2">
+                                        <a href="{{ url_for('subordinate_prepare') }}?manager_id={{ manager.id }}" 
+                                           class="btn btn-success btn-sm flex-fill">
+                                            <i class="fas fa-clipboard-check"></i> 準備
+                                        </a>
+                                        <a href="{{ url_for('history') }}" 
+                                           class="btn btn-outline-success btn-sm">
+                                            <i class="fas fa-history"></i> 履歴
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    
+                    <div class="mt-3">
+                        <button class="btn btn-outline-success btn-sm" onclick="showAddManagerModal()">
+                            <i class="fas fa-plus"></i> 上司を追加
+                        </button>
+                    </div>
+                {% else %}
+                    <div class="text-center py-4">
+                        <i class="fas fa-user-tie fa-3x text-muted mb-3"></i>
+                        <p class="text-muted">まだ上司が登録されていません</p>
+                        <button class="btn btn-success" onclick="showAddManagerModal()">
+                            <i class="fas fa-plus"></i> 上司を追加
+                        </button>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- 全体統計 -->
+        <div class="row g-3">
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body text-center p-4">
+                        <i class="fas fa-chart-line fa-2x text-primary mb-3"></i>
+                        <h6 class="card-title">今月の1on1</h6>
+                        <h3 class="text-primary">{{ monthly_count }}</h3>
+                        <p class="card-text small text-muted">実施回数</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body text-center p-4">
+                        <i class="fas fa-smile fa-2x text-success mb-3"></i>
+                        <h6 class="card-title">平均満足度</h6>
+                        <h3 class="text-success">{{ avg_satisfaction }}</h3>
+                        <p class="card-text small text-muted">5段階評価</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body text-center p-4">
+                        <i class="fas fa-users fa-2x text-info mb-3"></i>
+                        <h6 class="card-title">関係者数</h6>
+                        <h3 class="text-info">{{ total_relationships }}</h3>
+                        <p class="card-text small text-muted">上司・部下の合計</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 部下追加モーダル -->
+<div class="modal fade" id="addSubordinateModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">部下を追加</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="addSubordinateForm">
+                    <div class="mb-3">
+                        <label for="subordinate_email" class="form-label">部下のメールアドレス</label>
+                        <input type="email" class="form-control" id="subordinate_email" required>
+                        <div class="form-text">既に登録済みのユーザーのメールアドレスを入力してください</div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">キャンセル</button>
+                <button type="button" class="btn btn-primary" onclick="addSubordinate()">追加</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 上司追加モーダル -->
+<div class="modal fade" id="addManagerModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">上司を追加</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="addManagerForm">
+                    <div class="mb-3">
+                        <label for="manager_email" class="form-label">上司のメールアドレス</label>
+                        <input type="email" class="form-control" id="manager_email" required>
+                        <div class="form-text">既に登録済みのユーザーのメールアドレスを入力してください</div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">キャンセル</button>
+                <button type="button" class="btn btn-success" onclick="addManager()">追加</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    function showAddSubordinateModal() {
+        new bootstrap.Modal(document.getElementById('addSubordinateModal')).show();
+    }
+    
+    function showAddManagerModal() {
+        new bootstrap.Modal(document.getElementById('addManagerModal')).show();
+    }
+    
+    function addSubordinate() {
+        const email = document.getElementById('subordinate_email').value;
+        
+        if (!email) {
+            alert('メールアドレスを入力してください');
+            return;
+        }
+        
+        fetch('/api/add_relationship', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                subordinate_email: email,
+                type: 'subordinate'
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('部下を追加しました');
+                location.reload();
+            } else {
+                alert('追加に失敗しました: ' + data.error);
+            }
+        });
+    }
+    
+    function addManager() {
+        const email = document.getElementById('manager_email').value;
+        
+        if (!email) {
+            alert('メールアドレスを入力してください');
+            return;
+        }
+        
+        fetch('/api/add_relationship', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                manager_email: email,
+                type: 'manager'
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('上司を追加しました');
+                location.reload();
+            } else {
+                alert('追加に失敗しました: ' + data.error);
+            }
+        });
+    }
+</script>
+{% endblock %}

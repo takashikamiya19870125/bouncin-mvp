@@ -1,0 +1,220 @@
+{% extends "base.html" %}
+
+{% block title %}ダッシュボード - 1on1アシスタント MVP{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-8 mx-auto">
+        <div class="text-center mb-5">
+            <h1 class="display-4 text-primary">
+                <i class="fas fa-handshake"></i> 1on1アシスタント MVP
+            </h1>
+            <p class="lead">構造化された1on1で効果的なコミュニケーションを実現</p>
+        </div>
+
+        <!-- 1on1開始セクション -->
+        <div class="card mb-4">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0">
+                    <i class="fas fa-play"></i> 1on1を開始
+                </h5>
+            </div>
+            <div class="card-body">
+                <form id="startMeetingForm">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="manager_id" class="form-label">上司</label>
+                                <select class="form-select" id="manager_id" name="manager_id" required>
+                                    <option value="">選択してください</option>
+                                    {% for user in users %}
+                                        {% if user.role == 'manager' %}
+                                            <option value="{{ user.id }}">{{ user.name }}</option>
+                                        {% endif %}
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="subordinate_id" class="form-label">部下</label>
+                                <select class="form-select" id="subordinate_id" name="subordinate_id" required>
+                                    <option value="">選択してください</option>
+                                    {% for user in users %}
+                                        {% if user.role == 'subordinate' %}
+                                            <option value="{{ user.id }}">{{ user.name }}</option>
+                                        {% endif %}
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-success btn-lg">
+                            <i class="fas fa-play"></i> 1on1を開始
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- ユーザー管理セクション -->
+        <div class="card mb-4">
+            <div class="card-header bg-info text-white">
+                <h5 class="mb-0">
+                    <i class="fas fa-users"></i> ユーザー管理
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-8">
+                        <form id="addUserForm" class="row g-3">
+                            <div class="col-md-6">
+                                <input type="text" class="form-control" id="user_name" placeholder="ユーザー名" required>
+                            </div>
+                            <div class="col-md-4">
+                                <select class="form-select" id="user_role" required>
+                                    <option value="">役割を選択</option>
+                                    <option value="manager">上司</option>
+                                    <option value="subordinate">部下</option>
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <button type="submit" class="btn btn-info">
+                                    <i class="fas fa-plus"></i> 追加
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                
+                <!-- 現在のユーザー一覧 -->
+                <div class="mt-4">
+                    <h6>現在のユーザー:</h6>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6 class="text-success">上司</h6>
+                            <ul class="list-group">
+                                {% for user in users %}
+                                    {% if user.role == 'manager' %}
+                                        <li class="list-group-item">
+                                            <i class="fas fa-user-tie"></i> {{ user.name }}
+                                        </li>
+                                    {% endif %}
+                                {% endfor %}
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="text-primary">部下</h6>
+                            <ul class="list-group">
+                                {% for user in users %}
+                                    {% if user.role == 'subordinate' %}
+                                        <li class="list-group-item">
+                                            <i class="fas fa-user"></i> {{ user.name }}
+                                        </li>
+                                    {% endif %}
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 機能説明 -->
+        <div class="card bg-light">
+            <div class="card-body">
+                <h5 class="card-title">
+                    <i class="fas fa-lightbulb"></i> MVP機能
+                </h5>
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="text-center">
+                            <div class="bg-success text-white rounded-circle d-inline-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                                <i class="fas fa-play"></i>
+                            </div>
+                            <h6 class="mt-2">1. 開始</h6>
+                            <p class="small">過去内容の確認<br>アジェンダ生成</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="text-center">
+                            <div class="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                                <i class="fas fa-comments"></i>
+                            </div>
+                            <h6 class="mt-2">2. 実施</h6>
+                            <p class="small">構造化された<br>対話の実施</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="text-center">
+                            <div class="bg-info text-white rounded-circle d-inline-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                                <i class="fas fa-save"></i>
+                            </div>
+                            <h6 class="mt-2">3. 記録</h6>
+                            <p class="small">クイック入力で<br>次回に活用</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // 1on1開始フォーム処理
+    document.getElementById('startMeetingForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const managerId = document.getElementById('manager_id').value;
+        const subordinateId = document.getElementById('subordinate_id').value;
+        
+        if (!managerId || !subordinateId) {
+            alert('上司と部下を選択してください');
+            return;
+        }
+        
+        // ミーティング開始ページに遷移
+        window.location.href = `/meeting/start?manager_id=${managerId}&subordinate_id=${subordinateId}`;
+    });
+    
+    // ユーザー追加フォーム処理
+    document.getElementById('addUserForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const name = document.getElementById('user_name').value;
+        const role = document.getElementById('user_role').value;
+        
+        if (!name || !role) {
+            alert('名前と役割を入力してください');
+            return;
+        }
+        
+        fetch('/api/add_user', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                name: name,
+                role: role
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('ユーザーを追加しました');
+                location.reload();
+            } else {
+                alert('ユーザー追加に失敗しました: ' + data.error);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('エラーが発生しました');
+        });
+    });
+</script>
+{% endblock %}

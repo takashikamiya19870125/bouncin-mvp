@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+
+{% block title %}1on1履歴 - {{ current_user.name }}{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-10 mx-auto">
+        <!-- ヘッダー -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h2 class="mb-1">
+                    <i class="fas fa-history text-info"></i> 1on1履歴
+                </h2>
+                <p class="text-muted mb-0">過去の1on1記録を確認できます</p>
+            </div>
+            <a href="{{ url_for('dashboard') }}" class="btn btn-outline-secondary">
+                <i class="fas fa-arrow-left"></i> ダッシュボードに戻る
+            </a>
+        </div>
+
+        {% if history %}
+        <!-- 履歴一覧 -->
+        <div class="row g-3">
+            {% for meeting in history %}
+            <div class="col-md-6 col-lg-4">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body p-4">
+                        <!-- 日付と相手 -->
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div>
+                                <h6 class="card-title mb-1">
+                                    {% if meeting.role == 'manager' %}
+                                        <i class="fas fa-user-tie text-primary"></i> 上司として
+                                    {% else %}
+                                        <i class="fas fa-user text-success"></i> 部下として
+                                    {% endif %}
+                                </h6>
+                                <p class="text-muted small mb-0">
+                                    {{ meeting.partner_name }} ({{ meeting.partner_department }})
+                                </p>
+                            </div>
+                            <small class="text-muted">
+                                {{ meeting.date[:10] }}
+                            </small>
+                        </div>
+
+                        <!-- 話題カテゴリ -->
+                        {% if meeting.categories %}
+                        <div class="mb-3">
+                            <h6 class="small text-secondary mb-2">話題</h6>
+                            <div class="d-flex flex-wrap gap-1">
+                                {% for category in meeting.categories %}
+                                <span class="badge bg-light text-dark small">{{ category }}</span>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endif %}
+
+                        <!-- 重要なポイント -->
+                        {% if meeting.key_points %}
+                        <div class="mb-3">
+                            <h6 class="small text-secondary mb-2">重要なポイント</h6>
+                            {% for point in meeting.key_points %}
+                            <div class="small text-muted mb-1">
+                                <i class="fas fa-star text-warning"></i> {{ point }}
+                            </div>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+
+                        <!-- フォローアップ -->
+                        {% if meeting.follow_up %}
+                        <div class="mb-3">
+                            <h6 class="small text-secondary mb-2">フォローアップ</h6>
+                            <p class="small text-muted mb-0">{{ meeting.follow_up }}</p>
+                        </div>
+                        {% endif %}
+
+                        <!-- 詳細ボタン -->
+                        <div class="text-center mt-3">
+                            <button class="btn btn-outline-primary btn-sm" onclick="showMeetingDetail('{{ meeting.id }}')">
+                                <i class="fas fa-eye"></i> 詳細を見る
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- ページネーション（将来実装） -->
+        <div class="text-center mt-4">
+            <p class="text-muted small">最新10件を表示中</p>
+        </div>
+        {% else %}
+        <!-- 履歴がない場合 -->
+        <div class="text-center py-5">
+            <i class="fas fa-calendar-plus fa-3x text-muted mb-3"></i>
+            <h5 class="text-muted">まだ1on1の履歴がありません</h5>
+            <p class="text-muted mb-4">最初の1on1を実施して、履歴を蓄積していきましょう</p>
+            <a href="{{ url_for('dashboard') }}" class="btn btn-primary">
+                <i class="fas fa-plus"></i> 1on1を開始
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- 詳細モーダル -->
+<div class="modal fade" id="meetingDetailModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">1on1詳細</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div id="meetingDetailContent">
+                    <!-- 詳細内容がここに表示される -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">閉じる</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    function showMeetingDetail(meetingId) {
+        // 詳細表示機能（将来実装）
+        const modal = new bootstrap.Modal(document.getElementById('meetingDetailModal'));
+        document.getElementById('meetingDetailContent').innerHTML = `
+            <div class="text-center">
+                <i class="fas fa-info-circle fa-2x text-info mb-3"></i>
+                <p class="text-muted">詳細表示機能は今後実装予定です</p>
+                <p class="small text-muted">Meeting ID: ${meetingId}</p>
+            </div>
+        `;
+        modal.show();
+    }
+</script>
+{% endblock %}

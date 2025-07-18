@@ -1,0 +1,288 @@
+{% extends "base.html" %}
+
+{% block title %}部下用ダッシュボード - 1on1アシスタント{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-10 mx-auto">
+        <!-- ヘッダー -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h2 class="mb-1">
+                    <i class="fas fa-user text-success"></i> 部下用ダッシュボード
+                </h2>
+                <p class="text-muted mb-0">上司との効果的な1on1を準備</p>
+            </div>
+            <a href="{{ url_for('index') }}" class="btn btn-outline-secondary">
+                <i class="fas fa-exchange-alt"></i> 役割切り替え
+            </a>
+        </div>
+
+        <!-- 1on1準備セクション -->
+        <div class="card mb-4 border-0 shadow-sm">
+            <div class="card-body p-4">
+                <h5 class="card-title mb-3">
+                    <i class="fas fa-clipboard-check text-success"></i> 1on1準備
+                </h5>
+                
+                <form id="prepareMeetingForm" class="row g-3">
+                    <div class="col-md-4">
+                        <label class="form-label">あなた（部下）</label>
+                        <select class="form-select" id="subordinate_id" required>
+                            <option value="">選択してください</option>
+                            {% for subordinate in subordinates %}
+                                <option value="{{ subordinate.id }}">{{ subordinate.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">上司</label>
+                        <select class="form-select" id="manager_id" required>
+                            <option value="">選択してください</option>
+                            {% for manager in managers %}
+                                <option value="{{ manager.id }}">{{ manager.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">&nbsp;</label>
+                        <button type="submit" class="btn btn-success w-100">
+                            <i class="fas fa-clipboard-list"></i> 準備を開始
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- 最近の1on1記録 -->
+        <div class="card mb-4 border-0 shadow-sm">
+            <div class="card-body p-4">
+                <h5 class="card-title mb-3">
+                    <i class="fas fa-history text-info"></i> 最近の1on1記録
+                </h5>
+                
+                <div class="row">
+                    <div class="col-md-8">
+                        <p class="text-muted mb-3">過去の1on1内容を振り返り、継続的な成長につなげましょう</p>
+                        
+                        <!-- 記録がない場合の表示 -->
+                        <div class="text-center py-4">
+                            <i class="fas fa-notebook fa-3x text-muted mb-3"></i>
+                            <p class="text-muted">まだ1on1の記録がありません</p>
+                            <p class="small text-muted">最初の1on1準備を開始して、上司との対話を充実させましょう</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="bg-light rounded p-3">
+                            <h6 class="text-success mb-2">
+                                <i class="fas fa-lightbulb"></i> 準備のコツ
+                            </h6>
+                            <ul class="small text-muted mb-0">
+                                <li>相談したいことを事前に整理</li>
+                                <li>困っていることを具体的に</li>
+                                <li>成長したい分野を明確に</li>
+                                <li>感謝や改善提案も準備</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 今日の気持ち・状況 -->
+        <div class="card mb-4 border-0 shadow-sm">
+            <div class="card-body p-4">
+                <h5 class="card-title mb-3">
+                    <i class="fas fa-heart text-danger"></i> 今日の気持ち・状況
+                </h5>
+                
+                <div class="row">
+                    <div class="col-md-8">
+                        <p class="text-muted mb-3">今の状況や気持ちを記録しておくことで、1on1がより意味のあるものになります</p>
+                        
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <div class="card bg-light border-0">
+                                    <div class="card-body text-center p-3">
+                                        <i class="fas fa-smile fa-2x text-success mb-2"></i>
+                                        <h6 class="card-title">調子が良い</h6>
+                                        <p class="small text-muted mb-0">積極的に話せそう</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card bg-light border-0">
+                                    <div class="card-body text-center p-3">
+                                        <i class="fas fa-meh fa-2x text-warning mb-2"></i>
+                                        <h6 class="card-title">普通</h6>
+                                        <p class="small text-muted mb-0">いつも通りの感じ</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="bg-primary bg-opacity-10 rounded p-3">
+                            <h6 class="text-primary mb-2">
+                                <i class="fas fa-comments"></i> 部下の心得
+                            </h6>
+                            <ul class="small text-muted mb-0">
+                                <li>正直に話すことが大切</li>
+                                <li>質問されたら具体的に回答</li>
+                                <li>改善提案も遠慮なく</li>
+                                <li>感謝の気持ちも伝える</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- クイックアクセス -->
+        <div class="row g-3">
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body text-center p-4">
+                        <i class="fas fa-question-circle fa-2x text-info mb-3"></i>
+                        <h6 class="card-title">よくある質問</h6>
+                        <p class="card-text small text-muted">1on1でよく話されるトピック</p>
+                        <button class="btn btn-outline-info btn-sm">確認する</button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body text-center p-4">
+                        <i class="fas fa-target fa-2x text-warning mb-3"></i>
+                        <h6 class="card-title">目標・成長</h6>
+                        <p class="card-text small text-muted">キャリアプランを整理</p>
+                        <button class="btn btn-outline-warning btn-sm">計画する</button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body text-center p-4">
+                        <i class="fas fa-users fa-2x text-success mb-3"></i>
+                        <h6 class="card-title">ユーザー管理</h6>
+                        <p class="card-text small text-muted">新しいメンバーの追加・管理</p>
+                        <button class="btn btn-outline-success btn-sm" onclick="showUserManagement()">管理する</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ユーザー管理モーダル -->
+<div class="modal fade" id="userManagementModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">ユーザー管理</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="addUserForm" class="mb-4">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <input type="text" class="form-control" id="user_name" placeholder="ユーザー名" required>
+                        </div>
+                        <div class="col-md-4">
+                            <select class="form-select" id="user_role" required>
+                                <option value="">役割を選択</option>
+                                <option value="manager">上司</option>
+                                <option value="subordinate">部下</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <button type="submit" class="btn btn-primary w-100">追加</button>
+                        </div>
+                    </div>
+                </form>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6 class="text-primary">上司</h6>
+                        <div class="list-group">
+                            {% for manager in managers %}
+                                <div class="list-group-item">
+                                    <i class="fas fa-user-tie text-primary"></i> {{ manager.name }}
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <h6 class="text-success">部下</h6>
+                        <div class="list-group">
+                            {% for subordinate in subordinates %}
+                                <div class="list-group-item">
+                                    <i class="fas fa-user text-success"></i> {{ subordinate.name }}
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // 1on1準備フォーム処理
+    document.getElementById('prepareMeetingForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const subordinateId = document.getElementById('subordinate_id').value;
+        const managerId = document.getElementById('manager_id').value;
+        
+        if (!subordinateId || !managerId) {
+            alert('部下と上司を選択してください');
+            return;
+        }
+        
+        // 部下用の準備ページに遷移
+        window.location.href = `/subordinate/prepare?subordinate_id=${subordinateId}&manager_id=${managerId}`;
+    });
+    
+    // ユーザー管理モーダル表示
+    function showUserManagement() {
+        new bootstrap.Modal(document.getElementById('userManagementModal')).show();
+    }
+    
+    // ユーザー追加処理
+    document.getElementById('addUserForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const name = document.getElementById('user_name').value;
+        const role = document.getElementById('user_role').value;
+        
+        if (!name || !role) {
+            alert('名前と役割を入力してください');
+            return;
+        }
+        
+        fetch('/api/add_user', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                name: name,
+                role: role
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('ユーザーを追加しました');
+                location.reload();
+            } else {
+                alert('ユーザー追加に失敗しました: ' + data.error);
+            }
+        });
+    });
+</script>
+{% endblock %}

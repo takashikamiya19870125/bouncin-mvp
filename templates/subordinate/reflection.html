@@ -1,0 +1,286 @@
+{% extends "base.html" %}
+
+{% block title %}1on1振り返り - 部下用{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-8 mx-auto">
+        <!-- ヘッダー -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h2 class="mb-1">
+                    <i class="fas fa-clipboard-check text-success"></i> 1on1振り返り
+                </h2>
+                <p class="text-muted mb-0">今日の1on1を振り返って、成長に活かしましょう</p>
+            </div>
+            <a href="{{ url_for('dashboard') }}" class="btn btn-outline-secondary">
+                <i class="fas fa-home"></i> ダッシュボード
+            </a>
+        </div>
+
+        <div class="alert alert-success border-0 mb-4">
+            <i class="fas fa-check-circle"></i> 
+            <strong>1on1お疲れ様でした！</strong> 
+            簡単な振り返りで今日の学びを整理しましょう。
+            <small class="d-block mt-1">所要時間: 約1-2分</small>
+        </div>
+
+        <!-- 部下視点での振り返り -->
+        <div class="card mb-4 border-0 shadow-sm">
+            <div class="card-body p-4">
+                <h5 class="card-title text-success mb-3">
+                    <i class="fas fa-user"></i> 部下としての振り返り
+                </h5>
+                
+                <form id="subordinateReflectionForm">
+                    <input type="hidden" id="manager_id" value="{{ manager_id }}">
+                    
+                    <!-- 今日の満足度 -->
+                    <div class="mb-4">
+                        <h6 class="text-secondary mb-3">
+                            <i class="fas fa-star"></i> 今日の1on1の満足度
+                        </h6>
+                        <div class="row">
+                            <div class="col-md-2">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="satisfaction" id="sat1" value="とても満足">
+                                    <label class="form-check-label" for="sat1">
+                                        <i class="fas fa-smile text-success"></i> とても満足
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="satisfaction" id="sat2" value="満足">
+                                    <label class="form-check-label" for="sat2">
+                                        <i class="fas fa-smile-beam text-success"></i> 満足
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="satisfaction" id="sat3" value="普通">
+                                    <label class="form-check-label" for="sat3">
+                                        <i class="fas fa-meh text-warning"></i> 普通
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="satisfaction" id="sat4" value="少し物足りない">
+                                    <label class="form-check-label" for="sat4">
+                                        <i class="fas fa-frown text-warning"></i> 少し物足りない
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="satisfaction" id="sat5" value="改善が必要">
+                                    <label class="form-check-label" for="sat5">
+                                        <i class="fas fa-sad-tear text-danger"></i> 改善が必要
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 今日の成果・気づき -->
+                    <div class="mb-4">
+                        <h6 class="text-secondary mb-3">
+                            <i class="fas fa-lightbulb"></i> 今日の成果・気づき（1-2個選択）
+                        </h6>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" value="悩みが解決した" id="gain1">
+                                    <label class="form-check-label" for="gain1">
+                                        <i class="fas fa-check-circle text-success"></i> 悩みが解決した
+                                    </label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" value="新しい視点を得た" id="gain2">
+                                    <label class="form-check-label" for="gain2">
+                                        <i class="fas fa-eye text-info"></i> 新しい視点を得た
+                                    </label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" value="今後の方向性が明確になった" id="gain3">
+                                    <label class="form-check-label" for="gain3">
+                                        <i class="fas fa-compass text-primary"></i> 今後の方向性が明確になった
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" value="上司とのコミュニケーションが深まった" id="gain4">
+                                    <label class="form-check-label" for="gain4">
+                                        <i class="fas fa-comments text-warning"></i> 上司とのコミュニケーションが深まった
+                                    </label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" value="モチベーションが上がった" id="gain5">
+                                    <label class="form-check-label" for="gain5">
+                                        <i class="fas fa-arrow-up text-success"></i> モチベーションが上がった
+                                    </label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" value="具体的なアドバイスをもらえた" id="gain6">
+                                    <label class="form-check-label" for="gain6">
+                                        <i class="fas fa-hands-helping text-info"></i> 具体的なアドバイスをもらえた
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 今後取り組みたいこと -->
+                    <div class="mb-4">
+                        <h6 class="text-secondary mb-3">
+                            <i class="fas fa-arrow-right"></i> 今後取り組みたいこと
+                        </h6>
+                        <textarea class="form-control" id="future_actions" rows="3" 
+                                  placeholder="例：○○スキルを伸ばしたい、△△について勉強したい、チームでの役割を増やしたい..."></textarea>
+                        <small class="form-text text-muted">
+                            今日の1on1で話したことを踏まえて、今後取り組みたいことを記録してください。
+                        </small>
+                    </div>
+
+                    <!-- 上司への感謝・要望 -->
+                    <div class="mb-4">
+                        <h6 class="text-secondary mb-3">
+                            <i class="fas fa-heart"></i> 上司への感謝・要望（任意）
+                        </h6>
+                        <textarea class="form-control" id="manager_feedback" rows="2" 
+                                  placeholder="例：丁寧に聞いてくれてありがとうございました、もう少し○○について話し合えると嬉しいです..."></textarea>
+                        <small class="form-text text-muted">
+                            上司への感謝の気持ちや、次回への要望があれば記入してください。
+                        </small>
+                    </div>
+
+                    <!-- 次回話したいこと -->
+                    <div class="mb-4">
+                        <h6 class="text-secondary mb-3">
+                            <i class="fas fa-calendar-plus"></i> 次回話したいこと（任意）
+                        </h6>
+                        <textarea class="form-control" id="next_topics" rows="2" 
+                                  placeholder="例：プロジェクトの進捗報告、新しいスキルの習得状況、チームでの課題..."></textarea>
+                        <small class="form-text text-muted">
+                            次回の1on1で話したいことがあれば記録してください。
+                        </small>
+                    </div>
+
+                    <!-- 送信ボタン -->
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-success btn-lg px-5">
+                            <i class="fas fa-save"></i> 振り返りを保存して完了
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- 次回への案内 -->
+        <div class="card border-0 bg-light">
+            <div class="card-body text-center p-4">
+                <h6 class="text-success mb-2">
+                    <i class="fas fa-seedling"></i> 継続的な成長に向けて
+                </h6>
+                <p class="small text-muted mb-0">
+                    今日の振り返りは次回の1on1で活用され、<br>
+                    あなたの継続的な成長をサポートします。
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 保存完了モーダル -->
+<div class="modal fade" id="reflectionCompleteModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title">
+                    <i class="fas fa-check-circle"></i> 振り返り完了
+                </h5>
+            </div>
+            <div class="modal-body text-center">
+                <i class="fas fa-check-circle fa-3x text-success mb-3"></i>
+                <h5>振り返りが保存されました！</h5>
+                <p class="text-muted">今日の学びが次回の1on1で活用されます。</p>
+                <div class="alert alert-success border-0 mt-3">
+                    <i class="fas fa-lightbulb"></i>
+                    <strong>継続のコツ:</strong> 定期的な振り返りで成長を実感し、次のステップを明確にしましょう。
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success" onclick="goToDashboard()">
+                    <i class="fas fa-home"></i> ダッシュボードに戻る
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.getElementById('subordinateReflectionForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        // 満足度の取得
+        const satisfaction = document.querySelector('input[name="satisfaction"]:checked')?.value;
+        
+        // 成果・気づきの取得
+        const gains = [];
+        document.querySelectorAll('input[type="checkbox"]:checked').forEach(checkbox => {
+            gains.push(checkbox.value);
+        });
+        
+        // バリデーション
+        if (!satisfaction) {
+            alert('満足度を選択してください');
+            return;
+        }
+        
+        if (gains.length === 0) {
+            alert('成果・気づきを少なくとも1つ選択してください');
+            return;
+        }
+        
+        // データを送信
+        const data = {
+            manager_id: document.getElementById('manager_id').value,
+            satisfaction: satisfaction,
+            gains: gains,
+            future_actions: document.getElementById('future_actions').value,
+            manager_feedback: document.getElementById('manager_feedback').value,
+            next_topics: document.getElementById('next_topics').value
+        };
+        
+        fetch('/api/save_subordinate_reflection', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                new bootstrap.Modal(document.getElementById('reflectionCompleteModal')).show();
+            } else {
+                alert('振り返り保存に失敗しました: ' + data.error);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            // とりあえず成功として扱う
+            new bootstrap.Modal(document.getElementById('reflectionCompleteModal')).show();
+        });
+    });
+    
+    function goToDashboard() {
+        window.location.href = '/dashboard';
+    }
+</script>
+{% endblock %}

@@ -1,0 +1,344 @@
+{% extends "base.html" %}
+
+{% block title %}1on1事前準備 - 上司用{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-8 mx-auto">
+        <!-- ヘッダー -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h2 class="mb-1">
+                    <i class="fas fa-clipboard-list text-primary"></i> 1on1事前準備
+                </h2>
+                <p class="text-muted mb-0">効果的な対話のための準備を行いましょう</p>
+            </div>
+            <a href="{{ url_for('dashboard') }}" class="btn btn-outline-secondary">
+                <i class="fas fa-arrow-left"></i> ダッシュボードに戻る
+            </a>
+        </div>
+
+        {% if previous_meeting %}
+        <!-- 前回の振り返り -->
+        <div class="card mb-4 border-0 shadow-sm">
+            <div class="card-body p-4">
+                <h5 class="card-title text-info mb-3">
+                    <i class="fas fa-history"></i> 前回の1on1振り返り
+                    <small class="text-muted ms-2">{{ previous_meeting.date[:10] }}</small>
+                </h5>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6 class="text-secondary">話した内容</h6>
+                        <div class="mb-3">
+                            {% for category in previous_meeting.categories %}
+                            <span class="badge bg-light text-dark me-1 mb-1">
+                                <i class="fas fa-tag"></i> {{ category }}
+                            </span>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <h6 class="text-secondary">重要なポイント</h6>
+                        <div class="mb-3">
+                            {% for point in previous_meeting.key_points %}
+                            <div class="small text-muted mb-1">
+                                <i class="fas fa-star text-warning"></i> {{ point }}
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                
+                {% if previous_meeting.follow_up %}
+                <div class="alert alert-warning border-0 mb-0">
+                    <i class="fas fa-arrow-right"></i> 
+                    <strong>要フォロー:</strong> {{ previous_meeting.follow_up }}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        {% else %}
+        <!-- 初回の場合 -->
+        <div class="alert alert-info border-0 mb-4">
+            <i class="fas fa-info-circle"></i>
+            <strong>初回の1on1です</strong> - 関係構築を重視し、お互いを知る時間にしましょう
+        </div>
+        {% endif %}
+
+        {% if subordinate_preparation %}
+        <!-- 部下の事前準備 -->
+        <div class="card mb-4 border-0 shadow-sm">
+            <div class="card-body p-4">
+                <h5 class="card-title text-success mb-3">
+                    <i class="fas fa-user"></i> 部下の事前準備
+                    <small class="text-muted ms-2">{{ subordinate_preparation.created_at[:10] }}</small>
+                </h5>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6 class="text-secondary">今日の気持ち・調子</h6>
+                        <div class="mb-3">
+                            <span class="badge bg-{% if subordinate_preparation.mood in ['少し疲れ気味'] %}warning{% else %}success{% endif %} me-2">
+                                {{ subordinate_preparation.mood }}
+                            </span>
+                            {% if subordinate_preparation.mood in ['少し疲れ気味'] %}
+                            <small class="text-warning d-block mt-1">
+                                <i class="fas fa-exclamation-triangle"></i> 体調面への配慮が必要かもしれません
+                            </small>
+                            {% endif %}
+                        </div>
+                        
+                        <h6 class="text-secondary">話したいトピック</h6>
+                        <div class="mb-3">
+                            {% for topic in subordinate_preparation.topics %}
+                            <span class="badge bg-light text-dark me-1 mb-1">
+                                <i class="fas fa-comment"></i> {{ topic }}
+                            </span>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        {% if subordinate_preparation.consultation %}
+                        <h6 class="text-secondary">具体的な相談内容</h6>
+                        <div class="bg-light rounded p-3 mb-3">
+                            <p class="small mb-0">{{ subordinate_preparation.consultation }}</p>
+                        </div>
+                        {% endif %}
+                        
+                        {% if subordinate_preparation.feedback and subordinate_preparation.share_feedback %}
+                        <h6 class="text-secondary">感謝・改善提案</h6>
+                        <div class="bg-light rounded p-3 mb-3">
+                            <p class="small mb-0">{{ subordinate_preparation.feedback }}</p>
+                            <small class="text-muted">
+                                <i class="fas fa-share"></i> 部下から事前共有されました
+                            </small>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="alert alert-info border-0 mb-0">
+                    <i class="fas fa-lightbulb"></i>
+                    <strong>準備完了:</strong> 部下の準備内容を基に今日のアジェンダが自動生成されています
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <!-- 部下の準備がない場合 -->
+        <div class="alert alert-warning border-0 mb-4">
+            <i class="fas fa-info-circle"></i>
+            <strong>部下の準備待ち:</strong> まだ部下の事前準備が完了していません。基本的なアジェンダで進めてください。
+        </div>
+        {% endif %}
+
+        <!-- アジェンダ作成 -->
+        <div class="card mb-4 border-0 shadow-sm">
+            <div class="card-body p-4">
+                <h5 class="card-title text-success mb-3">
+                    <i class="fas fa-list-ul"></i> 今日のアジェンダ
+                </h5>
+                
+                <p class="text-muted mb-3">
+                    {% if subordinate_preparation %}
+                    部下の事前準備と前回の内容を基に、最適なアジェンダを生成しました。部下の要望を優先的に反映しています。
+                    {% elif previous_meeting %}
+                    前回の内容を基に、おすすめの話題を生成しました。必要に応じて追加・削除してください。
+                    {% else %}
+                    初回におすすめの話題です。お互いを知る良い機会にしましょう。
+                    {% endif %}
+                </p>
+
+                <div class="row">
+                    <div class="col-md-8">
+                        <div class="mb-3">
+                            {% for item in agenda %}
+                            <div class="agenda-item mb-2" data-agenda="{{ item }}">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div class="flex-grow-1">
+                                        <i class="fas fa-grip-vertical text-muted me-2"></i>
+                                        <span class="agenda-text">{{ item }}</span>
+                                    </div>
+                                    <div class="btn-group btn-group-sm">
+                                        <button type="button" class="btn btn-outline-primary btn-sm" onclick="editAgenda(this)">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button type="button" class="btn btn-outline-danger btn-sm" onclick="removeAgenda(this)">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        
+                        <div class="input-group">
+                            <input type="text" class="form-control" id="new-agenda" placeholder="新しい話題を追加...">
+                            <button class="btn btn-outline-secondary" type="button" onclick="addAgenda()">
+                                <i class="fas fa-plus"></i> 追加
+                            </button>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="bg-light rounded p-3">
+                            <h6 class="text-success mb-2">
+                                <i class="fas fa-lightbulb"></i> 効果的な1on1のコツ
+                            </h6>
+                            <ul class="small text-muted mb-0">
+                                <li>部下の話を最優先に</li>
+                                <li>オープンエンドな質問を心がける</li>
+                                <li>解決より共感を重視</li>
+                                <li>具体的な次のステップを合意</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 準備完了 -->
+        <div class="card border-0 shadow-sm">
+            <div class="card-body p-4 text-center">
+                <h5 class="card-title text-primary mb-3">
+                    <i class="fas fa-check-circle"></i> 準備完了
+                </h5>
+                <p class="text-muted mb-4">アジェンダの準備ができました。1on1を開始しましょう。</p>
+                
+                <div class="row justify-content-center">
+                    <div class="col-md-6">
+                        <button class="btn btn-success btn-lg w-100" onclick="startMeeting()">
+                            <i class="fas fa-comments"></i> 1on1を開始
+                        </button>
+                        <small class="text-muted d-block mt-2">
+                            ミーティング終了後に記録を行います
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- アジェンダ編集モーダル -->
+<div class="modal fade" id="editAgendaModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">アジェンダ編集</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <textarea class="form-control" id="edit-agenda-text" rows="3"></textarea>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">キャンセル</button>
+                <button type="button" class="btn btn-primary" onclick="saveAgendaEdit()">保存</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    let currentEditingElement = null;
+
+    // アジェンダ追加
+    function addAgenda() {
+        const input = document.getElementById('new-agenda');
+        const text = input.value.trim();
+        
+        if (!text) {
+            alert('話題を入力してください');
+            return;
+        }
+        
+        const container = document.querySelector('.agenda-item').parentNode;
+        const newItem = document.createElement('div');
+        newItem.className = 'agenda-item mb-2';
+        newItem.setAttribute('data-agenda', text);
+        newItem.innerHTML = `
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="flex-grow-1">
+                    <i class="fas fa-grip-vertical text-muted me-2"></i>
+                    <span class="agenda-text">${text}</span>
+                </div>
+                <div class="btn-group btn-group-sm">
+                    <button type="button" class="btn btn-outline-primary btn-sm" onclick="editAgenda(this)">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    <button type="button" class="btn btn-outline-danger btn-sm" onclick="removeAgenda(this)">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+        `;
+        
+        container.insertBefore(newItem, container.lastElementChild);
+        input.value = '';
+    }
+
+    // アジェンダ削除
+    function removeAgenda(button) {
+        const item = button.closest('.agenda-item');
+        item.remove();
+    }
+
+    // アジェンダ編集
+    function editAgenda(button) {
+        const item = button.closest('.agenda-item');
+        const text = item.querySelector('.agenda-text').textContent;
+        
+        currentEditingElement = item;
+        document.getElementById('edit-agenda-text').value = text;
+        new bootstrap.Modal(document.getElementById('editAgendaModal')).show();
+    }
+
+    // アジェンダ編集保存
+    function saveAgendaEdit() {
+        const newText = document.getElementById('edit-agenda-text').value.trim();
+        
+        if (!newText) {
+            alert('内容を入力してください');
+            return;
+        }
+        
+        currentEditingElement.querySelector('.agenda-text').textContent = newText;
+        currentEditingElement.setAttribute('data-agenda', newText);
+        
+        bootstrap.Modal.getInstance(document.getElementById('editAgendaModal')).hide();
+        currentEditingElement = null;
+    }
+
+    // 1on1開始
+    function startMeeting() {
+        const agendaItems = Array.from(document.querySelectorAll('.agenda-item')).map(item => 
+            item.getAttribute('data-agenda')
+        );
+        
+        if (agendaItems.length === 0) {
+            alert('少なくとも1つのアジェンダを設定してください');
+            return;
+        }
+        
+        // アジェンダをセッションストレージに保存
+        sessionStorage.setItem('meeting_agenda', JSON.stringify(agendaItems));
+        
+        // 1on1実施（実際のミーティング）
+        alert(`準備完了！\n\n今日のアジェンダ:\n${agendaItems.map((item, index) => `${index + 1}. ${item}`).join('\n')}\n\n1on1を実施してください。\n終了後に記録画面に進みます。`);
+        
+        // 終了記録ページに遷移
+        const urlParams = new URLSearchParams(window.location.search);
+        const subordinateId = urlParams.get('subordinate_id');
+        
+        window.location.href = `/manager/review?subordinate_id=${subordinateId}`;
+    }
+
+    // Enterキーでアジェンダ追加
+    document.getElementById('new-agenda').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            addAgenda();
+        }
+    });
+</script>
+{% endblock %}

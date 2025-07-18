@@ -1,0 +1,253 @@
+{% extends "base.html" %}
+
+{% block title %}1on1終了記録 - 1on1アシスタント MVP{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-8 mx-auto">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2>
+                <i class="fas fa-edit"></i> 1on1終了記録
+            </h2>
+            <a href="{{ url_for('index') }}" class="btn btn-outline-secondary">
+                <i class="fas fa-home"></i> ダッシュボードに戻る
+            </a>
+        </div>
+
+        <div class="alert alert-info">
+            <i class="fas fa-clock"></i> 
+            <strong>お疲れ様でした！</strong> 今日の1on1を簡単に記録して、次回により良い時間にしましょう。
+            <br><small>所要時間: 約1-2分</small>
+        </div>
+
+        <!-- 構造化クイック入力フォーム -->
+        <div class="card">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0">
+                    <i class="fas fa-clipboard-list"></i> 今日の1on1で話した内容
+                </h5>
+            </div>
+            <div class="card-body">
+                <form id="meetingEndForm">
+                    <input type="hidden" id="manager_id" value="{{ manager_id }}">
+                    <input type="hidden" id="subordinate_id" value="{{ subordinate_id }}">
+                    
+                    <!-- 話題カテゴリ -->
+                    <div class="mb-4">
+                        <h6><i class="fas fa-tags"></i> 話題カテゴリ（複数選択可）</h6>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-check category-checkbox">
+                                    <input class="form-check-input" type="checkbox" value="目標・業績の進捗" id="cat1">
+                                    <label class="form-check-label" for="cat1">
+                                        <i class="fas fa-bullseye text-primary"></i> 目標・業績の進捗
+                                    </label>
+                                </div>
+                                <div class="form-check category-checkbox">
+                                    <input class="form-check-input" type="checkbox" value="業務上の困りごと" id="cat2">
+                                    <label class="form-check-label" for="cat2">
+                                        <i class="fas fa-exclamation-triangle text-warning"></i> 業務上の困りごと
+                                    </label>
+                                </div>
+                                <div class="form-check category-checkbox">
+                                    <input class="form-check-input" type="checkbox" value="チーム・人間関係" id="cat3">
+                                    <label class="form-check-label" for="cat3">
+                                        <i class="fas fa-users text-info"></i> チーム・人間関係
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-check category-checkbox">
+                                    <input class="form-check-input" type="checkbox" value="スキル・成長相談" id="cat4">
+                                    <label class="form-check-label" for="cat4">
+                                        <i class="fas fa-graduation-cap text-success"></i> スキル・成長相談
+                                    </label>
+                                </div>
+                                <div class="form-check category-checkbox">
+                                    <input class="form-check-input" type="checkbox" value="キャリア・将来の話" id="cat5">
+                                    <label class="form-check-label" for="cat5">
+                                        <i class="fas fa-rocket text-purple"></i> キャリア・将来の話
+                                    </label>
+                                </div>
+                                <div class="form-check category-checkbox">
+                                    <input class="form-check-input" type="checkbox" value="ワークライフバランス" id="cat6">
+                                    <label class="form-check-label" for="cat6">
+                                        <i class="fas fa-balance-scale text-secondary"></i> ワークライフバランス
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 重要ポイント -->
+                    <div class="mb-4">
+                        <h6><i class="fas fa-star"></i> 今回の重要ポイント（1-2個選択）</h6>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-check key-point-checkbox">
+                                    <input class="form-check-input" type="checkbox" value="新しい課題が発見された" id="point1">
+                                    <label class="form-check-label" for="point1">
+                                        <i class="fas fa-search text-info"></i> 新しい課題が発見された
+                                    </label>
+                                </div>
+                                <div class="form-check key-point-checkbox">
+                                    <input class="form-check-input" type="checkbox" value="解決策が見つかった" id="point2">
+                                    <label class="form-check-label" for="point2">
+                                        <i class="fas fa-lightbulb text-warning"></i> 解決策が見つかった
+                                    </label>
+                                </div>
+                                <div class="form-check key-point-checkbox">
+                                    <input class="form-check-input" type="checkbox" value="次回までの宿題ができた" id="point3">
+                                    <label class="form-check-label" for="point3">
+                                        <i class="fas fa-tasks text-primary"></i> 次回までの宿題ができた
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-check key-point-checkbox">
+                                    <input class="form-check-input" type="checkbox" value="モチベーションが上がった" id="point4">
+                                    <label class="form-check-label" for="point4">
+                                        <i class="fas fa-arrow-up text-success"></i> モチベーションが上がった
+                                    </label>
+                                </div>
+                                <div class="form-check key-point-checkbox">
+                                    <input class="form-check-input" type="checkbox" value="関係性が深まった" id="point5">
+                                    <label class="form-check-label" for="point5">
+                                        <i class="fas fa-heart text-danger"></i> 関係性が深まった
+                                    </label>
+                                </div>
+                                <div class="form-check key-point-checkbox">
+                                    <input class="form-check-input" type="checkbox" value="スキルアップの方向性が明確になった" id="point6">
+                                    <label class="form-check-label" for="point6">
+                                        <i class="fas fa-compass text-info"></i> スキルアップの方向性が明確になった
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 次回フォロー項目 -->
+                    <div class="mb-4">
+                        <h6><i class="fas fa-arrow-right"></i> 次回フォローが必要な項目（任意）</h6>
+                        <textarea class="form-control" id="follow_up" rows="3" 
+                                  placeholder="例：○○プロジェクトの進捗確認、△△スキルの習得状況、チーム内の課題解決状況..."></textarea>
+                        <small class="form-text text-muted">
+                            一言メモ程度で構いません。次回の1on1で自動的に表示されます。
+                        </small>
+                    </div>
+
+                    <!-- 送信ボタン -->
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-success btn-lg">
+                            <i class="fas fa-save"></i> 記録を保存して完了
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- 保存後の案内 -->
+        <div class="card mt-4 bg-light">
+            <div class="card-body text-center">
+                <h6><i class="fas fa-info-circle"></i> 保存後について</h6>
+                <p class="small mb-0">
+                    記録内容は次回の1on1開始時に自動的に表示され、<br>
+                    過去の内容に基づいたアジェンダが自動生成されます。
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 保存完了モーダル -->
+<div class="modal fade" id="saveCompleteModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title">
+                    <i class="fas fa-check-circle"></i> 保存完了
+                </h5>
+            </div>
+            <div class="modal-body text-center">
+                <i class="fas fa-check-circle fa-3x text-success mb-3"></i>
+                <h5>1on1記録が保存されました！</h5>
+                <p>次回の1on1でこの内容が活用されます。</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success" onclick="goToDashboard()">
+                    <i class="fas fa-home"></i> ダッシュボードに戻る
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.getElementById('meetingEndForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        // 選択されたカテゴリを取得
+        const categories = [];
+        document.querySelectorAll('input[type="checkbox"]:checked').forEach(checkbox => {
+            if (checkbox.id.startsWith('cat')) {
+                categories.push(checkbox.value);
+            }
+        });
+        
+        // 選択された重要ポイントを取得
+        const keyPoints = [];
+        document.querySelectorAll('input[type="checkbox"]:checked').forEach(checkbox => {
+            if (checkbox.id.startsWith('point')) {
+                keyPoints.push(checkbox.value);
+            }
+        });
+        
+        // バリデーション
+        if (categories.length === 0) {
+            alert('話題カテゴリを少なくとも1つ選択してください');
+            return;
+        }
+        
+        if (keyPoints.length === 0) {
+            alert('重要ポイントを少なくとも1つ選択してください');
+            return;
+        }
+        
+        // データを送信
+        const data = {
+            manager_id: document.getElementById('manager_id').value,
+            subordinate_id: document.getElementById('subordinate_id').value,
+            categories: categories,
+            key_points: keyPoints,
+            follow_up: document.getElementById('follow_up').value
+        };
+        
+        fetch('/api/save_meeting', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // 成功モーダルを表示
+                new bootstrap.Modal(document.getElementById('saveCompleteModal')).show();
+            } else {
+                alert('保存に失敗しました: ' + data.error);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('エラーが発生しました');
+        });
+    });
+    
+    function goToDashboard() {
+        window.location.href = '/';
+    }
+</script>
+{% endblock %}
