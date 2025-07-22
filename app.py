@@ -751,5 +751,15 @@ def save_subordinate_reflection():
     # 簡単な成功レスポンス（実際のデータ保存は省略）
     return jsonify({'success': True, 'message': '振り返りデータを保存しました'})
 
+# Railway.app環境でのデモデータ自動生成
+if os.environ.get('RAILWAY_ENVIRONMENT') or os.environ.get('PORT'):
+    try:
+        from init_demo_data import init_demo_data_if_needed
+        init_demo_data_if_needed()
+    except Exception as e:
+        print(f"Demo data initialization failed: {e}")
+
 if __name__ == '__main__':
-    app.run(debug=True, port=5003)
+    import os
+    port = int(os.environ.get('PORT', 5003))
+    app.run(debug=False, host='0.0.0.0', port=port)

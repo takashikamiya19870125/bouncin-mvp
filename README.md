@@ -38,23 +38,62 @@ bouncinは、上司と部下の1on1ミーティングを効果的にサポート
 - **Frontend**: Bootstrap 5, JavaScript
 - **Database**: JSON file storage (軽量MVP向け)
 - **Authentication**: SHA256 password hashing
-- **Deployment**: Netlify Functions
+- **Deployment**: Railway.app (クラウドデプロイ), Netlify (ランディングページ)
 
 ## 📦 ローカル環境での実行
 
-```bash
-# リポジトリをクローン
-git clone <repository-url>
-cd one_on_one_assistant_mvp
+### 🚀 クイックスタート
 
-# 依存関係をインストール
+```bash
+# 1. リポジトリをクローン
+git clone https://github.com/takashikamiya19870125/bouncin-mvp.git
+cd bouncin-mvp
+
+# 2. 依存関係をインストール
 pip install -r requirements.txt
 
-# アプリケーションを起動
+# 3. 【推奨】デモデータを生成（すぐに体験可能）
+python demo_setup.py
+
+# 4. アプリケーションを起動
 python app.py
 ```
 
-ブラウザで `http://127.0.0.1:5003` にアクセスしてください。
+### 🎯 デモアカウント（demo_setup.py実行後）
+
+| 役割 | メールアドレス | パスワード | 名前 |
+|------|----------------|------------|------|
+| 上司 | manager@demo.com | demo123 | 田中 太郎 |
+| 部下 | member@demo.com | demo123 | 佐藤 花子 |
+
+**※既に上司・部下関係、サンプル準備データ、過去の会議記録が設定済み**
+
+### 🌐 アクセス方法
+
+1. ブラウザで `http://127.0.0.1:5003` にアクセス
+2. 「新規登録」でアカウントを作成
+3. ダッシュボードで上司・部下関係を構築
+4. 1on1の事前準備から実際の会議まで体験可能
+
+### 💡 体験のヒント
+
+**最初の設定**:
+1. 2つのアカウントを作成（例：manager@example.com, member@example.com）
+2. 一方を上司、もう一方を部下として関係を構築
+3. 部下アカウントで事前準備を実施
+4. 上司アカウントで自動生成されたアジェンダを確認
+
+**推奨体験フロー**:
+1. **部下として**: 調子や話したいことを事前準備
+2. **上司として**: 部下の準備内容を確認し、アジェンダを活用
+3. **会議実施**: 重要なポイントと継続事項を記録
+4. **履歴確認**: 過去の1on1履歴と統計を確認
+
+### 🔧 動作環境
+
+- **Python**: 3.8以上
+- **ブラウザ**: Chrome, Firefox, Safari等のモダンブラウザ
+- **OS**: Windows, macOS, Linux対応
 
 ## 📋 使用方法
 
